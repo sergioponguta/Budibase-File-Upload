@@ -34,22 +34,14 @@
   const formApi = formContext?.formApi;
   const labelPos = fieldGroupContext?.labelPosition || "above";
   $: formStep = formStepContext ? $formStepContext || 1 : 1;
-  $: formField = formApi?.registerField(
-    field,
-    "text",
-    "",
-    disabled,
-    validation,
-    formStep
-  );
+  $: formField = formApi?.registerField(field, "text", "", disabled, validation, formStep);
   $: schemaType = fieldSchema?.type !== "formula" ? fieldSchema?.type : "string";
   $: unsubscribe = formField?.subscribe((value) => {
     fieldState = value?.fieldState;
     fieldApi = value?.fieldApi;
-    fieldSchema = value?.fieldSchema
+    fieldSchema = value?.fieldSchema;
   });
-  $: labelClass =
-    labelPos === "above" ? "" : `spectrum-FieldLabel--${labelPos}`;
+  $: labelClass = labelPos === "above" ? "" : `spectrum-FieldLabel--${labelPos}`;
   onDestroy(() => {
     fieldApi?.deregister();
     unsubscribe?.();
@@ -68,9 +60,7 @@
     //Check if adding selected files will breach file length restriction.
     if (maxFiles && files.length + browseFiles.length > maxFiles) {
       notificationStore.actions.warning(
-        "Too many files. You can only upload " +
-          maxFiles +
-          " files into this field."
+        "Demasiados archivos, solo puede subir " + maxFiles + " archivo en este campo."
       );
       browseFiles = [];
       document.getElementById(buttonID).value = null;
@@ -80,11 +70,11 @@
     for (let i = 0; i < browseFiles.length; i++) {
       if (maxSize && maxSize < browseFiles[i].size) {
         notificationStore.actions.warning(
-          "File " +
+          "El archivo " +
             browseFiles[i].name +
-            " is too large. You can only upload files up to " +
+            " es demasiado grande. Solo puede subir archivos de maximo " +
             maxSize +
-            " bytes into this field."
+            " bytes dentro de este campo."
         );
         browseFiles = [];
         document.getElementById(buttonID).value = null;
@@ -121,7 +111,7 @@
         if (encodingProtection) {
           json = "." + json + ".";
         }
-        if(files.length == 0) json = "";
+        if (files.length == 0) json = "";
         const changed = fieldApi.setValue(json);
         if (onChange && changed) {
           onChange({ value: json });
@@ -129,7 +119,7 @@
         archivedFiles = [...files];
       })
       .catch((e) => {
-        notificationStore.actions.warning("Error reading files. Try again.");
+        notificationStore.actions.warning("Error leyendo archivos. Intente de nuevo");
         files = [...archivedFiles];
         browseFiles = [];
         document.getElementById(buttonID).value = null;
@@ -186,16 +176,14 @@
   onMount(() => {
     if (fieldState?.value) {
       let jsonValue = fieldState.value;
-      if(jsonValue == "0") return;
+      if (jsonValue == "0") return;
       if (encodingProtection) {
         files = JSON.parse(jsonValue.slice(1, -1)); //Removes the first and last character of the string
       } else files = JSON.parse(jsonValue);
       if (maxFiles && files.length > maxFiles) {
         files = files.slice(0, maxFiles);
         notificationStore.actions.warning(
-          "Too many files. Only the first " +
-            maxFiles +
-            " files in the field will be kept."
+          "Demasiados archivs. Solo los primeros " + maxFiles + " archivos seran conservados"
         );
       }
       //add corresponding blob url if using it
@@ -210,7 +198,7 @@
           })
           .catch((e) => {
             notificationStore.actions.warning(
-              "Error reading files. Please exit the page to avoid losing data."
+              "Error leyendo archivos. Por favor abandone la pagina para evitar perdidas de datos"
             );
             files = [];
             archivedFiles = [];
@@ -254,10 +242,10 @@
 <div class="spectrum-Form-item" use:styleable={$component.styles}>
   {#if !formContext}
     <div class="placeholder">Form components need to be wrapped in a form</div>
-    {:else if !fieldState}
-    <div class="placeholder"></div>
+  {:else if !fieldState}
+    <div class="placeholder" />
   {:else if schemaType && schemaType !== type && !["options", "longform"].includes(type)}
-  <div class="placeholder">This Field setting is the wrong data type for this component</div>
+    <div class="placeholder">This Field setting is the wrong data type for this component</div>
   {:else}
     <label
       class:hidden={!label}
@@ -267,40 +255,36 @@
       {label || " "}
     </label>
     <div class="spectrum-Form-itemField">
-        <input
-          type="file"
-          id={buttonID}
-          style="display: none;"
-          multiple
-          accept={acceptedFiles}
-          bind:files={browseFiles}
-        />
-        <input
-          type="button"
-          value="Browse..."
-          class="browse-button"
-          onclick="document.getElementById('{buttonID}').click();"
-          disabled = {fieldState.disabled}
-        />
-        <div>
-          {#each files as file, i}
-            <div class="file-button-body">
-              <button
-                class="file-button file-button-delete"
-                on:click={() => deleteButtonClick(i)}>✖</button
-              >
-              <button
-                class="file-button file-button-link"
-                on:click={() => onLinkClick(i)}
-              >
-                {file.name}
-              </button>
-            </div>
-          {/each}
-        </div>
-        {#if fieldState.error}
-          <div class="error">{fieldState.error}</div>
-        {/if}
+      <input
+        type="file"
+        id={buttonID}
+        style="display: none;"
+        multiple
+        accept={acceptedFiles}
+        bind:files={browseFiles}
+      />
+      <input
+        type="button"
+        value="Buscar..."
+        class="browse-button"
+        onclick="document.getElementById('{buttonID}').click();"
+        disabled={fieldState.disabled}
+      />
+      <div>
+        {#each files as file, i}
+          <div class="file-button-body">
+            <button class="file-button file-button-delete" on:click={() => deleteButtonClick(i)}
+              >✖</button
+            >
+            <button class="file-button file-button-link" on:click={() => onLinkClick(i)}>
+              {file.name}
+            </button>
+          </div>
+        {/each}
+      </div>
+      {#if fieldState.error}
+        <div class="error">{fieldState.error}</div>
+      {/if}
     </div>
   {/if}
 </div>
@@ -318,7 +302,8 @@
   .spectrum-Form-itemField {
     position: relative;
     width: 100%;
-    background-color: white;
+    background-color: rgb(0, 0, 0);
+    opacity: 10%;
     padding: 10px;
     border-radius: 4px;
     border: 1px solid rgb(190, 190, 190);
@@ -369,10 +354,7 @@
     left: 40px;
   }
   .error {
-    color: var(
-      --spectrum-semantic-negative-color-default,
-      var(--spectrum-global-color-red-500)
-    );
+    color: var(--spectrum-semantic-negative-color-default, var(--spectrum-global-color-red-500));
     font-size: var(--spectrum-global-dimension-font-size-75);
     margin-top: var(--spectrum-global-dimension-size-75);
   }
