@@ -52,9 +52,6 @@ Note: If you are going back to use older versions, do not use versions 1.0.3 or 
 ## Other Tools
 This plugin also has a companion Repeater plugin so that you can display the files outside of a form. [Check it out here!](https://github.com/chungchunwang/Budibase-File-Repeater)
 
-## Dev Instructions
-[View here for Budibase's documentation on plugins.](https://docs.budibase.com/docs/custom-plugin)
-
 To build your new plugin run the following in your Budibase CLI:
 ```
 budi plugins --build
